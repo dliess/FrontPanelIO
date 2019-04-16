@@ -1,0 +1,127 @@
+@startuml
+
+interface IRender
+{
+    +{abstract} void drawPixel(pixPos, colorRGB) = 0
+    +{abstract} void streamToSubWindow(subWindow,  pPixelStream) = 0
+    +{abstract} void streamFromFramebuf(subWindow, resolution, pFrameBuf) = 0
+    +{abstract} void drawLine(p1, p2, colorRGB) = 0
+    +{abstract} void drawHLine(p1, width, colorRGB) = 0
+    +{abstract} void drawVLine(p1, height, colorRGB) = 0
+    +{abstract} void drawRectangle(rect, colorRGB, filled) = 0
+    +{abstract} void drawText(textMidLinePos, colorRGB, str) = 0
+    +{abstract} void setFont(rFont, scaleFactor) = 0
+    +{abstract} void getRenderedTextSize(txt, pFont, size, offset) = 0
+}
+
+interface RenderIf
+{
+    +{abstract} bool setFrameBufRendering(bool on) = 0
+}
+
+interface IRenderMedium
+{
+    {abstract} void flushFrameBuffer()
+}
+
+abstract RenderBase
+{
+    +{abstract} void drawPixel(pixPos, colorRGB) = 0
+    +void streamToSubWindow(subWindow,  pPixelStream)
+    +void streamFromFramebuf(subWindow, resolution, pFrameBuf)
+    +void drawLine(p1, p2, colorRGB)
+    +void drawHLine(p1, width, colorRGB)
+    +void drawVLine(p1, height, colorRGB)
+    +void drawRectangle(rect, colorRGB, filled)
+    +void drawText(textMidLinePos, colorRGB, str)
+    +void setFont(rFont, scaleFactor)
+    +void getRenderedTextSize(txt, pFont, size, offset)
+
+    -void _drawLine(p1, p2, colorRGB)
+    -m_fontRenderer : FontRenderer
+}
+
+abstract DirectRenderer
+{
+    +{abstract} uint32_t getDiscretePixelOverFrameStreamPercentage() = 0
+}
+
+class DoubleBufHandler
+{
+    +void flushFrameBuffer()
+    +DisplayFrameBuffer& actualFrameBuf() 
+
+    -void streamDiffArea(diffRectangle)
+    -void drawDiffPixelsOneByOne(diffRectangle)
+}
+
+class FrameBufRenderer
+{
+    +void drawPixel(pixPos, colorRGB)
+}
+
+class DoubleBufAnalyzer
+{
+    +void analyze()
+    +uint32_t getNumDiffPixels() const
+    +const gfx::Rectangle &diffArea() const
+    -m_diffArea: gfx::Rectangle
+    -m_numDiffPixels: uint32_t
+    -{static}MAX: const gfx::Pixel
+}
+
+class DisplayFrameBuffer
+{
+    +ColorRGB& at(gfx::Pixel x, gfx::Pixel y)
+    +const ColorRGB& at(gfx::Pixel x, gfx::Pixel y) const
+    +ColorRGB& at(const gfx::Coord& pixPos)
+    +const ColorRGB& at(const gfx::Coord& pixPos) const
+    +void switchBuffers(DisplayFrameBuffer& other)
+    +const gfx::Resolution& resolution() const
+    +void clear()
+    +bool isDirty() const
+    +const ColorRGB* getBuffer() const
+    -m_resolution: Vector2d<uint32_t>
+    -m_pFrameBuf: ColorRGB*
+    -m_dirty: bool
+    -{static} ColorRGB &getDummyElement()
+}
+
+class RenderSwitch
+{
+    +void drawPixel(pixPos, colorRGB)
+    +void streamToSubWindow(subWindow,  pPixelStream)
+    +void streamFromFramebuf(subWindow, resolution, pFrameBuf)
+    +void drawLine(p1, p2, colorRGB)
+    +void drawHLine(p1, width, colorRGB)
+    +void drawVLine(p1, height, colorRGB)
+    +void drawRectangle(rect, colorRGB, filled)
+    +void drawText(textMidLinePos, colorRGB, str)
+    +void setFont(rFont, scaleFactor)
+    +void getRenderedTextSize(txt, pFont, size, offset)
+    +virtual bool setFrameBufRendering(bool on)
+    +virtiual void flushFrameBuffer()
+    -m_frameBufRendering : bool
+}
+
+IRender <|-- RenderIf
+RenderIf <|-- IRenderMedium
+IRenderMedium <|-- RenderSwitch
+IRender <|-- RenderBase
+RenderBase <|-- DirectRenderer
+RenderBase <|-- FrameBufRenderer
+
+RenderSwitch o-- DirectRenderer
+RenderSwitch o-- DoubleBufHandler
+
+FrameBufRenderer o-- DisplayFrameBuffer
+
+FrameBufRenderer <|-- DoubleBufHandler
+
+DoubleBufHandler o-- DirectRenderer
+DoubleBufHandler *--"2" DisplayFrameBuffer
+
+DoubleBufAnalyzer o--"2" DisplayFrameBuffer
+DoubleBufHandler "uses"..> DoubleBufAnalyzer
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+
+object prevFrameBuffer
+object actualFrameBuffer
+object doubleBufHandler
+object doubleBufAnalyzer
+object renderSwitch
+object hwAbstraction
+
+
+doubleBufHandler ..> doubleBufAnalyzer : "uses"
+doubleBufHandler *-- prevFrameBuffer
+doubleBufHandler *-- actualFrameBuffer
+doubleBufHandler o-- hwAbstraction
+doubleBufAnalyzer o-- prevFrameBuffer
+doubleBufAnalyzer o-- actualFrameBuffer
+renderSwitch *--> doubleBufHandler :  <b><color:red>framebuf flush  \n <b><color:red>framebuf rendering >
+renderSwitch *--> hwAbstraction : <b><color:blue>direct rendering >
+
+@enduml
