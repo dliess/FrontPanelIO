@@ -21,12 +21,9 @@ public:
     }
     ~TopologyContainer()
     {
-        if(m_holder)
+        for(int i = 0; i <=  Topology::Id::eLast; ++i)
         {
-            for(int i = 0; i <=  Topology::Id::eLast; ++i)
-            {
-                delete[] m_holder[i];
-            }
+            delete[] m_holder[i];
         }
     }
     TopologyContainer(const TopologyContainer&) = delete;
