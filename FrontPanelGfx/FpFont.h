@@ -35,7 +35,6 @@ public:
     m_pBitmap(pBitmap),
     m_pGlyph(pGlyph),
     m_first(first),
-    m_last(last),
     m_yAdvance(yAdvance)
     {}
     FontType getType() const
@@ -110,7 +109,6 @@ private:
 	uint8_t  *m_pBitmap;
 	GfxGlyph *m_pGlyph;
 	uint8_t   m_first;
-    uint8_t   m_last;
 	uint8_t   m_yAdvance;
 };
 

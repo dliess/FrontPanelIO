@@ -6,7 +6,7 @@
 
 namespace fp
 {
-class Widget;
+struct Widget;
 }
 
 namespace fp

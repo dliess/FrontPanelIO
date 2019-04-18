@@ -9,7 +9,7 @@ RenderBase::RenderBase() :
     {}
 
 void RenderBase::streamToSubWindow(const gfx::Rectangle& subWindow,
-                                            const ColorRGB*  pPixelStream)
+                                   const ColorRGB*  pPixelStream)
 {
     for(gfx::Pixel subY = 0; subY < subWindow.height(); ++subY)
     {
@@ -35,16 +35,16 @@ void RenderBase::streamFromFramebuf(const gfx::Rectangle&  subWindow,
 }
 
 void RenderBase::drawLine( const gfx::Coord&    p1,
-                                    const gfx::Coord&    p2,
-                                    const ColorRGB& colorRGB)
+                           const gfx::Coord&    p2,
+                           const ColorRGB& colorRGB)
 {
     if(p1.x == p2.x)
     {
-        drawVLine(p1, abs(p2.y - p1.y + 1), colorRGB);
+        drawVLine(p1, abs(static_cast<int32_t>(p2.y) - static_cast<int32_t>(p1.y) + 1), colorRGB);
     }
     else if(p1.y == p2.y)
     {
-        drawHLine(p1, abs(p2.x - p1.x + 1), colorRGB);
+        drawHLine(p1, abs(static_cast<int32_t>(p2.x) - static_cast<int32_t>(p1.x) + 1), colorRGB);
     }
     else
     {
@@ -119,7 +119,7 @@ void RenderBase::_drawLine(const gfx::Coord&    p1,
     gfx::Pixel x1 = p2.x;
     gfx::Pixel y1 = p2.y;
     
-    bool steep = abs(y1 - y0) > abs(x1 - x0);
+    bool steep = abs(static_cast<int32_t>(y1) - static_cast<int32_t>(y0)) > abs(static_cast<int32_t>(x1) - static_cast<int32_t>(x0));
     if(steep)
     {
         std::swap(x0, y0);
@@ -133,7 +133,7 @@ void RenderBase::_drawLine(const gfx::Coord&    p1,
     }
 
     gfx::Pixel dx = x1 - x0;
-    gfx::Pixel dy = abs(y1 - y0);
+    gfx::Pixel dy = abs(static_cast<int32_t>(y1) - static_cast<int32_t>(y0));
 
     int32_t err = dx / 2;
     int32_t ystep;
