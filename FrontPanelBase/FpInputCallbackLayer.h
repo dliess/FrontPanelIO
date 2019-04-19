@@ -56,7 +56,7 @@ void _InputCallbackLayer<WidgetType, Topology>::checkValuesAndInvokeCallbacks()
 template<class WidgetType, class Topology>
 void _InputCallbackLayer<WidgetType, Topology>::registerCB(typename WidgetType::CallbackIf& cbIf, const Widget& w)
 {
-    m_Callbacks.forWidget(w, [this, &cbIf](WidgetCbStack& wCbStack, const Widget& w){
+    m_Callbacks.forWidget(w, [&cbIf](WidgetCbStack& wCbStack, const Widget& w){
         wCbStack.pushBack(&cbIf);
     });
 }

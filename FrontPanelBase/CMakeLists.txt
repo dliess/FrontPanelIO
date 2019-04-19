@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.8)
 
 add_subdirectory(UnitTest EXCLUDE_FROM_ALL)
 
@@ -14,3 +14,5 @@ target_include_directories(FpBase INTERFACE
 )
 
 target_link_libraries(FpBase INTERFACE FpUtils)
+
+target_compile_options(FpBase INTERFACE -Wno-zero-length-array)
