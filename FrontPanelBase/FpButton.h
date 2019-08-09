@@ -42,6 +42,7 @@ public:
     {
     public:
         virtual void registerCB(typename Button::CallbackIf& cb, const Widget& w) = 0;
+        virtual void unRegisterCB(typename Button::CallbackIf& cb, const Widget& w) = 0;
     };
 };
 

@@ -49,6 +49,7 @@ public:
     {
     public:
         virtual void registerCB(Encoder::CallbackIf& cb, const Widget& w) = 0;
+        virtual void unRegisterCB(Encoder::CallbackIf& cb, const Widget& w) = 0;
     };
 };
  
