@@ -23,7 +23,7 @@ public:
     class CallbackIf
     {
     public:
-        virtual void onPressStateChange(const PressState& data, const Widget& w) = 0;
+        virtual void onPressStateChange(const PressState& pressState, const Widget& w) = 0;
     };
     struct ValueHolder
     {
