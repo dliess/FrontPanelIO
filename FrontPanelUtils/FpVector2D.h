@@ -10,38 +10,38 @@ namespace fp
 template<typename T>
 struct Vector2d
 {
-    Vector2d() :
+    constexpr Vector2d() noexcept:
         x(0),
         y(0)
     {}
-    Vector2d(const Vector2d& other) :
+    constexpr Vector2d(const Vector2d& other) noexcept:
         x(other.x),
         y(other.y)
     {}
-    Vector2d(const T& _x, const T& _y) :
+    constexpr Vector2d(const T& _x, const T& _y) noexcept:
         x(_x),
         y(_y)
     {}
-    bool operator!=(const Vector2d<T>& rhs) const
+    constexpr bool operator!=(const Vector2d<T>& rhs) const noexcept
     {
         return (x != rhs.x) || (y != rhs.y);
     }
-    bool operator==(const Vector2d<T>& rhs) const
+    constexpr bool operator==(const Vector2d<T>& rhs) const noexcept
     {
         return (x == rhs.x) && (y == rhs.y);
     }
-    Vector2d& operator=(const T& val)
+    constexpr Vector2d& operator=(const T& val) noexcept
     {
         x = val;
         y = val;
         return *this;
     }
-    Vector2d operator+(const Vector2d<T>& rhs) const
+    constexpr Vector2d operator+(const Vector2d<T>& rhs) const noexcept
     {
         return Vector2d(x + rhs.x, y + rhs.y);
     }
 
-    Vector2d inc() const
+    constexpr Vector2d inc() const noexcept
     {
         return Vector2d(x+1, y+1);
     }
