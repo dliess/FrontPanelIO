@@ -61,7 +61,7 @@ class WidgetCodeGenerator:
             if widgetType != "Led" and widgetType != "Positioner" and widgetType != "Display":
                 ret += "   using WidgetType = fp::" + widgetType + ";\n\n"
             # ------- Getting Dimension ----------
-            ret += "   static const Vector2d<uint8_t> &getDim(Id widgetId)\n"
+            ret += "   static constexpr Vector2d<uint8_t> getDim(Id widgetId) noexcept\n"
             ret += "   {\n"
             dimStr = ""
             for label in self.topology[widgetType].keys():
@@ -72,10 +72,10 @@ class WidgetCodeGenerator:
                 j = str(widget['Dimension'][1])
                 dimStr += "{" + i + ", " + j + "}"
             if dimStr:
-                ret += "      static const Vector2d<uint8_t> dim[Id::eLast + 1] = { " + dimStr + "} ;\n"
+                ret += "      constexpr Vector2d<uint8_t> dim[Id::eLast + 1] = { " + dimStr + "} ;\n"
                 ret += "      return dim[widgetId];\n"
             else:
-                ret += "      static const Vector2d<uint8_t> dim = {0,0};\n"
+                ret += "      constexpr Vector2d<uint8_t> dim = {0,0};\n"
                 ret += "      return dim;\n"
             ret += "   }\n\n"
             # ------- Getting Resolution ----------

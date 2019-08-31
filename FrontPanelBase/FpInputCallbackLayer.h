@@ -15,6 +15,7 @@ public:
     void checkValuesAndInvokeCallbacks(const Widget& w);
     void checkValuesAndInvokeCallbacks();
     void registerCB(typename WidgetType::CallbackIf& cb, const Widget& w);
+    void unRegisterCB(typename WidgetType::CallbackIf& cb, const Widget& w);
 private:
    using WidgetCbStack = CallbackStack< typename WidgetType::CallbackIf, 3 >;
    TopologyContainer<WidgetCbStack, Topology>                    m_Callbacks;
@@ -58,6 +59,14 @@ void _InputCallbackLayer<WidgetType, Topology>::registerCB(typename WidgetType::
 {
     m_Callbacks.forWidget(w, [&cbIf](WidgetCbStack& wCbStack, const Widget& w){
         wCbStack.pushBack(&cbIf);
+    });
+}
+
+template<class WidgetType, class Topology>
+void _InputCallbackLayer<WidgetType, Topology>::unRegisterCB(typename WidgetType::CallbackIf& cbIf, const Widget& w)
+{
+    m_Callbacks.forWidget(w, [&cbIf](WidgetCbStack& wCbStack, const Widget& w){
+        wCbStack.remove(&cbIf);
     });
 }
 

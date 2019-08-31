@@ -60,6 +60,7 @@ public:
     {
     public:
         virtual void registerCB(typename TouchSurface::CallbackIf& cb, const Widget& w) = 0;
+        virtual void unRegisterCB(typename TouchSurface::CallbackIf& cb, const Widget& w) = 0;
     };
 };
 
