@@ -22,7 +22,11 @@ struct Widget
     Widget(uint8_t _id, uint8_t x, uint8_t y) :
        id(_id),
        coord({x, y})
-    {}       
+    {}
+    bool operator==(const Widget& rhs) const noexcept
+    {
+       return (id == rhs.id) && (coord == rhs.coord);
+    }
     uint8_t id;
     Vector2d<uint8_t> coord;
 };
