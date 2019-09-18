@@ -51,6 +51,20 @@ public:
         return &(m_holder[wId][w.coord.x * Topology::getDim(wId).y + w.coord.y]);
     }
 
+    const DataType *get(const Widget &w) const
+    {
+        if(w.id > Topology::Id::eLast)
+        {
+            return nullptr;
+        }
+        const auto wId = static_cast<typename Topology::Id>(w.id);
+        if(w.coord.x >= Topology::getDim(wId).x || w.coord.y >= Topology::getDim(wId).y)
+        {
+            return nullptr;
+        }
+        return &(m_holder[wId][w.coord.x * Topology::getDim(wId).y + w.coord.y]);
+    }
+
     template<class Visitor>
     void forEach(Visitor&& visitor)
     {

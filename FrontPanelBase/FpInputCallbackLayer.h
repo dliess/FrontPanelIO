@@ -12,6 +12,7 @@ class _InputCallbackLayer
 {
 public:
     typename WidgetType::ValueHolder* get(const Widget& w);
+    const typename WidgetType::ValueHolder* get(const Widget& w) const;
     void checkValuesAndInvokeCallbacks(const Widget& w);
     void checkValuesAndInvokeCallbacks();
     void registerCB(typename WidgetType::CallbackIf& cb, const Widget& w);
@@ -24,6 +25,12 @@ private:
 
 template<class WidgetType, class Topology>
 typename WidgetType::ValueHolder* _InputCallbackLayer<WidgetType, Topology>::get(const Widget& w)
+{
+    return m_values.get(w);
+}
+
+template<class WidgetType, class Topology>
+const typename WidgetType::ValueHolder* _InputCallbackLayer<WidgetType, Topology>::get(const Widget& w) const
 {
     return m_values.get(w);
 }
