@@ -67,6 +67,12 @@ public:
     public:
         virtual void setLed(const Widget& w, const fp::Led::ColorRGB& colorRGB) = 0;
     };
+    class ILedScene
+    {
+    public:
+        virtual void onGotRevealed(const Widget& w) = 0;
+        virtual void onGotHidden(const Widget& w) = 0;
+    };
 };
 
 } // namespace fp

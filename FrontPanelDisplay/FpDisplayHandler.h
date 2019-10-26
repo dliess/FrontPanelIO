@@ -22,7 +22,7 @@ public:
 
 private:
     RenderMediumProvider& m_rRenderMediumProvider;
-    using DisplayCbStack = CallbackStack<RenderCbIf, 3>;
+    using DisplayCbStack = CallbackStack<RenderCbIf*, 3>;
     using DisplayTopology = typename RenderMediumProvider::DisplayTopology;
     TopologyContainer<DisplayCbStack, DisplayTopology> m_displayCbContainer;
 };

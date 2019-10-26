@@ -2,54 +2,65 @@
 #define FP_CALLBACK_STACK_H
 
 #include <cstdint> // uint8_t
+#include <array>
+#include <optional>
 
 namespace fp
 {
 
-template <class FpInputCallbackIf, unsigned int Size>
+template <class Data, unsigned int Size>
 class CallbackStack
 {
 public:
     CallbackStack() :
-        m_cb(),
+        m_data(),
         m_topIndex(0),
         m_botIndex(0)
     {}
-    void pushBack(FpInputCallbackIf* pCbIf)
+    void pushBack(const Data& data)
     {
-        if(m_cb[m_topIndex])
+        if(m_data[m_topIndex])
         {
             incTopIndex();
         }
-        m_cb[m_topIndex] = pCbIf;
+        m_data[m_topIndex] = data;
     }
-    FpInputCallbackIf* getActual() const
+    std::optional<Data> getActual() const
     {
-        return m_cb[m_topIndex];
+        return actual();
     }
-    void remove(const FpInputCallbackIf* pCbIf)
+    std::optional<Data>& actual()
+    {
+        return m_data[m_topIndex];
+    }
+    const std::optional<Data>& actual() const
+    {
+        return m_data[m_topIndex];
+    }
+
+    void remove(const Data& data)
     {
         uint8_t const tmpTopIndex = m_topIndex;
-        if(m_cb[m_topIndex] == pCbIf)
+        if(m_data[m_topIndex] == data)
         {
-            m_cb[m_topIndex] = nullptr;
+            m_data[m_topIndex].reset();
             decTopIndex();
         }
         for(uint8_t i = decIndex(tmpTopIndex); i != decIndex(m_botIndex); i = decIndex(i))
         {
-            if(m_cb[i] == pCbIf)
+            if(m_data[i] == data)
             {
                 for(uint8_t j = i; j != tmpTopIndex; j = incIndex(j))
                 {
-                    m_cb[j] = m_cb[incIndex(j)];
-                    m_cb[incIndex(j)] = nullptr;
+                    m_data[j] = m_data[incIndex(j)];
+                    m_data[incIndex(j)].reset();
                 }
                 decTopIndex();
             }
         }
     }
 private:
-    FpInputCallbackIf* m_cb[Size];
+    std::array<std::optional<Data>, Size> m_data;
     int8_t  m_topIndex;
     int8_t  m_botIndex;
     void incTopIndex()
@@ -90,85 +101,102 @@ private:
     }
 };
 
-template <class FpInputCallbackIf>
-class CallbackStack<FpInputCallbackIf, 0>
+template <class Data>
+class CallbackStack<Data, 0>
 {
 };
 
-template <class FpInputCallbackIf>
-class CallbackStack<FpInputCallbackIf, 1>
+template <class Data>
+class CallbackStack<Data, 1>
 {
 public:
-    CallbackStack() :
-        m_cb(nullptr)
-    {}
-    void pushBack(FpInputCallbackIf* pCbIf)
+    void pushBack(const Data& data)
     {
-        m_cb = pCbIf;
+        m_data = data;
     }
-    FpInputCallbackIf* getActual() const
+    std::optional<Data> getActual() const
     {
-        return m_cb;
+        return actual();
     }
-    void remove(const FpInputCallbackIf* pCbIf)
+    std::optional<Data>& actual()
     {
-        if(m_cb == pCbIf)
+        return m_data;
+    }
+    const std::optional<Data>& actual() const
+    {
+        return m_data;
+    }
+    void remove(const Data& data)
+    {
+        if(m_data == data)
         {
-            m_cb = nullptr;
+            m_data.reset();
         } 
     }
 private:
-    FpInputCallbackIf* m_cb;
+    std::optional<Data> m_data;
 };
 
-template <class FpInputCallbackIf>
-class CallbackStack<FpInputCallbackIf, 2>
+template <class Data>
+class CallbackStack<Data, 2>
 {
 public:
-    CallbackStack() :
-        m_cb{nullptr, nullptr}
-    {}
-    void pushBack(FpInputCallbackIf* pCbIf)
+    void pushBack(const Data& data)
     {
-        if(m_cb[1])
+        if(m_data[1])
         {
-            m_cb[0] = m_cb[1];
-            m_cb[1] = pCbIf;
+            m_data[0] = m_data[1];
+            m_data[1] = data;
         }
-        else if(m_cb[0])
+        else if(m_data[0])
         {
-            m_cb[1] = pCbIf;
+            m_data[1] = data;
         }
         else
         {
-            m_cb[0] = pCbIf;
+            m_data[0] = data;
         }
     }
-    FpInputCallbackIf* getActual() const
+    std::optional<Data> getActual()
     {
-        if(m_cb[1])
+        return actual();
+    }
+    std::optional<Data>& actual()
+    {
+        if(m_data[1])
         {
-            return m_cb[1];
+            return m_data[1];
         }
         else
         {
-            return m_cb[0];
+            return m_data[0];
         }
     }
-    void remove(const FpInputCallbackIf* pCbIf)
+    const std::optional<Data>& actual() const
     {
-        if(m_cb[1] == pCbIf)
+        if(m_data[1])
         {
-            m_cb[1] = nullptr;
+            return m_data[1];
         }
-        if(m_cb[0] == pCbIf)
+        else
         {
-            m_cb[0] = m_cb[1];
-            m_cb[0] = nullptr;
+            return m_data[0];
+        }
+    }
+    void remove(const Data &data)
+    {
+        if(m_data[1] == data)
+        {
+            m_data[1].reset();
+        }
+        if(m_data[0] == data)
+        {
+            m_data[0] = m_data[1];
+            m_data[0].reset();
         }
     }
 private:
-    FpInputCallbackIf* m_cb[2];
+    std::array<std::optional<Data>, 2> m_data;
 };
 
 } // namespace fp
