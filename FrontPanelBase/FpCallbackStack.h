@@ -17,6 +17,7 @@ public:
         m_topIndex(0),
         m_botIndex(0)
     {}
+
     void pushBack(const Data& data)
     {
         if(m_data[m_topIndex])
@@ -25,17 +26,31 @@ public:
         }
         m_data[m_topIndex] = data;
     }
+
     std::optional<Data> getActual() const
     {
         return actual();
     }
+
     std::optional<Data>& actual()
     {
         return m_data[m_topIndex];
     }
+
     const std::optional<Data>& actual() const
     {
         return m_data[m_topIndex];
+    }
+
+    template <typename Func>
+    void forEach(Func f)
+    {
+        auto i = m_botIndex;
+        while(i != m_topIndex)
+        {
+            f(*m_data[i]);
+            i = incIndex(i);
+        }
     }
 
     void remove(const Data& data)
@@ -114,18 +129,28 @@ public:
     {
         m_data = data;
     }
+
     std::optional<Data> getActual() const
     {
         return actual();
     }
+
     std::optional<Data>& actual()
     {
         return m_data;
     }
+
     const std::optional<Data>& actual() const
     {
         return m_data;
     }
+
+    template <typename Func>
+    void forEach(Func f)
+    {
+        if(m_data) f(*m_data);
+    }
+
     void remove(const Data& data)
     {
         if(m_data == data)
@@ -157,10 +182,12 @@ public:
             m_data[0] = data;
         }
     }
+
     std::optional<Data> getActual()
     {
         return actual();
     }
+
     std::optional<Data>& actual()
     {
         if(m_data[1])
@@ -172,6 +199,7 @@ public:
             return m_data[0];
         }
     }
+
     const std::optional<Data>& actual() const
     {
         if(m_data[1])
@@ -183,6 +211,14 @@ public:
             return m_data[0];
         }
     }
+
+    template <typename Func>
+    void forEach(Func f)
+    {
+        if(m_data[0]) f(*m_data[0]);
+        if(m_data[1]) f(*m_data[1]);
+    }
+
     void remove(const Data &data)
     {
         if(m_data[1] == data)

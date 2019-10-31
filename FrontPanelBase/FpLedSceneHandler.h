@@ -8,24 +8,24 @@
 namespace fp
 {
 
-template<typename Derived, int StackDepth = 3>
+template<typename Derived, typename LedTopology, int StackDepth = 3>
 class LedSceneHandler
 {
 public:
-    void reserveLed(Led::ILedScene& ledScene, const Widget& w, const Led::ColorRGB& colorRGB);
-    void releaseLed(Led::ILedScene& ledScene, const Widget& w);
-    void setLed(Led::ILedScene& ledScene, const Widget& w, const Led::ColorRGB& colorRGB);
+    void reserveLed(Led::ILedScene* pLedScene, const Widget& w, const Led::ColorRGB& colorRGB);
+    void releaseLed(Led::ILedScene* pLedScene, const Widget& w);
+    void setLedOfScene(Led::ILedScene* pLedScene, const Widget& w, const Led::ColorRGB& colorRGB);
 private:
     struct LedSceneData 
     {
         Led::ILedScene* pLedScene;
         Led::ColorRGB   color;
-        LedSceneData(const Led::ILedScene &ledScene) : pLedScene(&ledScene) {}
-        LedSceneData(const Led::ILedScene &ledScene, const Led::ColorRGB& colorRGB) : pLedScene(&ledScene), color(colorRGB) {}
+        LedSceneData(Led::ILedScene *pLedScene) : pLedScene(pLedScene) {}
+        LedSceneData(Led::ILedScene *pLedScene, const Led::ColorRGB& colorRGB) : pLedScene(pLedScene), color(colorRGB) {}
         bool operator==(const LedSceneData& rhs) const noexcept{ return pLedScene == rhs.pLedScene;}
         bool operator!=(const LedSceneData& rhs) const noexcept{ return !operator==(rhs);}
     };
-    using LedSceneContainer = TopologyContainer<CallbackStack<LedSceneData, StackDepth>, typename Push2Topology::Led>;
+    using LedSceneContainer = TopologyContainer<CallbackStack<LedSceneData, StackDepth>, LedTopology>;
     LedSceneContainer m_ledSceneContainer;
     const Derived& derived() const noexcept;
     Derived& derived() noexcept;
@@ -33,72 +33,88 @@ private:
 
 } //namespace fp
 
-template<typename Derived, int StackDepth>
-void fp::LedSceneHandler<Derived, StackDepth>::reserveLed(fp::Led::ILedScene& ledScene, const fp::Widget& w, const Led::ColorRGB& colorRGB)
+template<typename Derived, typename LedTopology, int StackDepth>
+void fp::LedSceneHandler<Derived, LedTopology, StackDepth>::reserveLed(fp::Led::ILedScene* pLedScene,
+                                                                       const fp::Widget& w,
+                                                                       const Led::ColorRGB& colorRGB)
 {
-    auto stack = m_ledSceneContainer.get(w);
-    if(stack)
-    {
-        auto actual = stack->getActual();
-        if(actual)
+    forWidget<LedTopology>(w, [this, &pLedScene, &colorRGB](const fp::Widget _w){
+        auto stack = m_ledSceneContainer.get(_w);
+        if(stack)
         {
-            if(actual->pLedScene == &ledScene)
+            auto actual = stack->getActual();
+            if(actual)
             {
-                return;
+                if(actual->pLedScene == pLedScene)
+                {
+                    return;
+                }
+                else
+                {
+                    actual->pLedScene->onGotHidden(_w);
+                }
             }
-            else
-            {
-                actual->pLedScene->onGotHidden(w);
-            }
+            stack->pushBack(LedSceneData(pLedScene, colorRGB));
+            derived().setLed(_w, colorRGB);
         }
-        stack->pushBack({&ledScene, colorRGB});
-        derived().setLed(w, colorRGB);
-    }
+    });
 }
 
-template<typename Derived, int StackDepth>
-void fp::LedSceneHandler<Derived, StackDepth>::releaseLed(fp::Led::ILedScene& ledScene, const fp::Widget& w)
+template<typename Derived, typename LedTopology, int StackDepth>
+void fp::LedSceneHandler<Derived, LedTopology, StackDepth>::releaseLed(fp::Led::ILedScene* pLedScene,
+                                                                       const fp::Widget& w)
 {
-    auto stack = m_ledSceneContainer.get(w);
-    if(stack)
-    {
-        stack->remove(LedSceneData(ledScene));
-        auto actual = stack->getActual();
-        if(actual && actual->pLedScene == &ledScene)
+    forWidget<LedTopology>(w, [this, &pLedScene](const fp::Widget _w){
+        auto stack = m_ledSceneContainer.get(_w);
+        if(stack)
         {
-            auto newActual = stack->getActual();
-            if(newActual)
+            const bool wasActual = (stack->getActual() == pLedScene);
+            stack->remove(LedSceneData(pLedScene));
+            if(wasActual)
             {
-                newActual->pLedScene->onGotRevealed(w);
-                derived().setLed(w, newActual->color);
+                auto newActual = stack->getActual();
+                if(newActual)
+                {
+                    newActual->pLedScene->onGotRevealed(_w);
+                    derived().setLed(_w, newActual->color);
+                }
             }
         }
-    }
+    });
 }
 
-template<typename Derived, int StackDepth>
-void fp::LedSceneHandler<Derived, StackDepth>::setLed(fp::Led::ILedScene& ledScene, const fp::Widget& w, const fp::Led::ColorRGB& colorRGB)
+template<typename Derived, typename LedTopology, int StackDepth>
+void fp::LedSceneHandler<Derived, LedTopology, StackDepth>::setLedOfScene(fp::Led::ILedScene* pLedScene,
+                                                                          const fp::Widget& w,
+                                                                          const fp::Led::ColorRGB& colorRGB)
 {
-    auto stack = m_ledSceneContainer.get(w);
-    if(stack)
-    {
-        auto actual = stack->getActual();
-        if(actual && actual->pLedScene == &ledScene)
+    forWidget<LedTopology>(w, [this, &pLedScene, &colorRGB](const fp::Widget _w){
+        auto stack = m_ledSceneContainer.get(_w);
+        if(stack)
         {
-            stack->actual()->color = colorRGB;
-            derived().setLed(w, colorRGB);
+            stack->forEach([&pLedScene, &colorRGB](LedSceneData& ledSceneData){
+                if(ledSceneData.pLedScene == pLedScene)
+                {
+                    ledSceneData.color = colorRGB;
+                }
+            });
+            auto actual = stack->getActual();
+            if(actual && actual->pLedScene == pLedScene)
+            {
+                derived().setLed(_w, colorRGB);
+            }
         }
-    }
+    });
 }
 
-template<typename Derived, int StackDepth>
-const Derived& fp::LedSceneHandler<Derived, StackDepth>::derived() const noexcept
+template<typename Derived, typename LedTopology, int StackDepth>
+const Derived& fp::LedSceneHandler<Derived, LedTopology, StackDepth>::derived() const noexcept
 {
     return *(static_cast<Derived*>(this));
 }
 
-template<typename Derived, int StackDepth>
-Derived& fp::LedSceneHandler<Derived, StackDepth>::derived() noexcept
+template<typename Derived, typename LedTopology, int StackDepth>
+Derived& fp::LedSceneHandler<Derived, LedTopology, StackDepth>::derived() noexcept
 {
     return *(static_cast<Derived*>(this));
 }

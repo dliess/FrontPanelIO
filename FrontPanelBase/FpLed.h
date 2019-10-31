@@ -19,6 +19,7 @@ public:
         uint32_t r;
         uint32_t g;
         uint32_t b;
+        constexpr bool operator==(const ColorRGB& rhs) const noexcept { return r == rhs.r && g == rhs.g && b == rhs.b; }
     };
     enum ColorIndex
     {
