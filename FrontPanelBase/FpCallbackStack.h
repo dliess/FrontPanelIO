@@ -46,9 +46,9 @@ public:
     void forEach(Func f)
     {
         auto i = m_botIndex;
-        while(i != m_topIndex)
-        {
-            f(*m_data[i]);
+        for(;;){
+            if(m_data[i]) f(*m_data[i]);
+            if(i == m_topIndex) break;
             i = incIndex(i);
         }
     }
