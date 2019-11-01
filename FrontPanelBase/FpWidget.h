@@ -27,6 +27,12 @@ struct Widget
     {
        return (id == rhs.id) && (coord == rhs.coord);
     }
+    bool operator<(const Widget& rhs) const noexcept
+    {
+       if(id < rhs.id) return true;
+       if(coord.x < rhs.coord.x) return true;
+       return coord.y < rhs.coord.y;
+    }
     uint8_t id;
     Vector2d<uint8_t> coord;
 };
