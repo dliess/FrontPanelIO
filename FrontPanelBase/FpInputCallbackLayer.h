@@ -18,7 +18,7 @@ public:
     void registerCB(typename WidgetType::CallbackIf& cb, const Widget& w);
     void unRegisterCB(typename WidgetType::CallbackIf& cb, const Widget& w);
 private:
-   using WidgetCbStack = CallbackStack< typename WidgetType::CallbackIf*, 3 >;
+   using WidgetCbStack = CallbackStack< typename WidgetType::CallbackIf*, 8 >;
    TopologyContainer<WidgetCbStack, Topology>                    m_Callbacks;
    TopologyContainer<typename WidgetType::ValueHolder, Topology> m_values;
 };
