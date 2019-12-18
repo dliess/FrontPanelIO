@@ -30,6 +30,24 @@ private:
     uint32_t data;
 };
 
+class ABGR
+{
+public:
+    constexpr ABGR() noexcept: data(0xff000000) {}
+    constexpr ABGR(uint32_t r, uint32_t g, uint32_t b) noexcept:
+        data(  (b & 0xff) << 16 | 
+               (g & 0xff) <<  8 | 
+               (r & 0xff) <<  0 |
+               0xff000000 )
+        {}
+    constexpr uint8_t r() const noexcept{ return (data      ) & 0xff; }
+    constexpr uint8_t g() const noexcept{ return (data >>  8) & 0xff; }
+    constexpr uint8_t b() const noexcept{ return (data >> 16) & 0xff; }
+    constexpr bool operator!=(const ABGR& rhs) const noexcept { return data != rhs.data;}
+private:
+    uint32_t data;
+};
+
 class BGRA
 {
 public:
@@ -81,7 +99,7 @@ private:
 } // namespace detail::color
 
 #ifdef __FP_COLOR_REPRESENTATION_EMBEDDED_STYLE__
-using ColorRGB = detail::color::ColorRGB<detail::color::BGRA>;
+using ColorRGB = detail::color::ColorRGB<detail::color::ABGR>;
 #else
 using ColorRGB = detail::color::ColorRGB<detail::color::ARGB>;
 #endif
