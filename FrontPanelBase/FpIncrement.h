@@ -35,6 +35,7 @@ public:
         if(divider > 0)
         {
             m_divider = divider;
+            m_increment = 0;
         }
     }
 

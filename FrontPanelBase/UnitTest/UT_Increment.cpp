@@ -120,3 +120,33 @@ TEST(IncrementTest, NegativeValueWithDivider) {
     ASSERT_EQ(-1, increment.value());
     ASSERT_EQ(true, increment.hasChanged());
 }
+
+TEST(IncrementTest, SetDividerClearsValueEvenIfSame) {
+    Increment<int> increment;
+    increment.setDivider(4);
+
+    increment.set(1);
+    ASSERT_EQ(0, increment.value());
+    ASSERT_EQ(false, increment.hasChanged());
+    increment.set(1);
+    ASSERT_EQ(0, increment.value());
+    ASSERT_EQ(false, increment.hasChanged());
+    increment.set(1);
+    ASSERT_EQ(0, increment.value());
+    ASSERT_EQ(false, increment.hasChanged());
+
+
+    increment.setDivider(4);
+    increment.set(1);
+    ASSERT_EQ(0, increment.value());
+    ASSERT_EQ(false, increment.hasChanged());
+    increment.set(1);
+    ASSERT_EQ(0, increment.value());
+    ASSERT_EQ(false, increment.hasChanged());
+    increment.set(1);
+    ASSERT_EQ(0, increment.value());
+    ASSERT_EQ(false, increment.hasChanged());
+    increment.set(1);
+    ASSERT_EQ(1, increment.value());
+    ASSERT_EQ(true, increment.hasChanged());
+}

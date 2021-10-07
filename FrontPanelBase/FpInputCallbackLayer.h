@@ -13,6 +13,8 @@ class _InputCallbackLayer
 public:
     typename WidgetType::ValueHolder* get(const Widget& w);
     const typename WidgetType::ValueHolder* get(const Widget& w) const;
+    template<typename Cb> void forWidgetValueDo(const Widget& w, Cb&& cb);
+    template<typename Cb> void forWidgetValueDo(const Widget& w, Cb&& cb) const;
     void checkValuesAndInvokeCallbacks(const Widget& w);
     void checkValuesAndInvokeCallbacks();
     void registerCB(typename WidgetType::CallbackIf& cb, const Widget& w);
@@ -33,6 +35,25 @@ template<class WidgetType, class Topology>
 const typename WidgetType::ValueHolder* _InputCallbackLayer<WidgetType, Topology>::get(const Widget& w) const
 {
     return m_values.get(w);
+}
+
+
+template<class WidgetType, class Topology>
+template<typename Cb>
+void _InputCallbackLayer<WidgetType, Topology>::forWidgetValueDo(const Widget& w, Cb&& cb)
+{
+    m_values.forEach([cb](typename WidgetType::ValueHolder& valueHolder, const Widget& w){
+        cb(valueHolder, w);
+    });
+}
+
+template<class WidgetType, class Topology>
+template<typename Cb>
+void _InputCallbackLayer<WidgetType, Topology>::forWidgetValueDo(const Widget& w, Cb&& cb) const
+{
+    m_values.forEach([cb](typename WidgetType::ValueHolder& valueHolder, const Widget& w){
+        cb(valueHolder, w);
+    });
 }
 
 template<class WidgetType, class Topology>
