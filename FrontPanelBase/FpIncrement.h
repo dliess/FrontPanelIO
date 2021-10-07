@@ -1,39 +1,46 @@
 #ifndef FP_INCREMENT_H
 #define FP_INCREMENT_H
 
+#include <type_traits>
 namespace fp
 {
 
-template< class T >
+
+template< class T, std::enable_if_t<std::is_integral<T>::value, bool> = true >
 class Increment
 {
 public:
-    Increment() : 
-        m_increment()
-    {}
-
-    void set(const T& increment)
+    void set(const T& increment) noexcept
     {
         m_increment += increment;
     }
 
-    const T& value() const
+    T value() const noexcept
     {
-        return m_increment;
+        return m_increment / static_cast<T>(m_divider);
     }
 
-    bool hasChanged() const
+    bool hasChanged() const noexcept
     {
-        return 0 != m_increment;
+        return value() != 0;
     }
 
-    void resetState()
+    void resetState() noexcept
     {
-        m_increment = 0;
+        m_increment = m_increment % static_cast<T>(m_divider);
+    }
+
+    void setDivider(const std::make_unsigned_t<T>& divider) noexcept
+    {
+        if(divider > 0)
+        {
+            m_divider = divider;
+        }
     }
 
 private:
-    T m_increment;
+    T m_increment {0};
+    std::make_unsigned_t<T> m_divider {1};
 };
 
 } // namespace fp
