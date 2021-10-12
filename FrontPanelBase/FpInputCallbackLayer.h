@@ -42,7 +42,7 @@ template<class WidgetType, class Topology>
 template<typename Cb>
 void _InputCallbackLayer<WidgetType, Topology>::forWidgetValueDo(const Widget& w, Cb&& cb)
 {
-    m_values.forEach([cb](typename WidgetType::ValueHolder& valueHolder, const Widget& w){
+    m_values.forWidget(w, [cb](typename WidgetType::ValueHolder& valueHolder, const Widget& w){
         cb(valueHolder, w);
     });
 }
@@ -51,7 +51,7 @@ template<class WidgetType, class Topology>
 template<typename Cb>
 void _InputCallbackLayer<WidgetType, Topology>::forWidgetValueDo(const Widget& w, Cb&& cb) const
 {
-    m_values.forEach([cb](typename WidgetType::ValueHolder& valueHolder, const Widget& w){
+    m_values.forWidget(w, [cb](typename WidgetType::ValueHolder& valueHolder, const Widget& w){
         cb(valueHolder, w);
     });
 }
