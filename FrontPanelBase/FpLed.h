@@ -71,8 +71,8 @@ public:
     class ILedScene
     {
     public:
-        virtual void onGotRevealed(const Widget& w) = 0;
-        virtual void onGotHidden(const Widget& w) = 0;
+        virtual void onLedGotRevealed(const Widget& w) = 0;
+        virtual void onLedGotHidden(const Widget& w) = 0;
     };
 };
 

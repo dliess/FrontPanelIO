@@ -51,7 +51,7 @@ void fp::LedSceneHandler<Derived, LedTopology, StackDepth>::reserveLed(fp::Led::
                 }
                 else
                 {
-                    actual->pLedScene->onGotHidden(_w);
+                    actual->pLedScene->onLedGotHidden(_w);
                 }
             }
             stack->pushBack(LedSceneData(pLedScene, colorRGB));
@@ -75,7 +75,7 @@ void fp::LedSceneHandler<Derived, LedTopology, StackDepth>::releaseLed(fp::Led::
                 auto newActual = stack->getActual();
                 if(newActual)
                 {
-                    newActual->pLedScene->onGotRevealed(_w);
+                    newActual->pLedScene->onLedGotRevealed(_w);
                     derived().setLed(_w, newActual->color);
                 }
             }

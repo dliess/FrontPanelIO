@@ -40,8 +40,8 @@ private:
 class TestLedUser : public Led::ILedScene
 {
 public:
-    void onGotRevealed(const Widget& w) final {};
-    void onGotHidden(const Widget& w) final {};
+    void onLedGotRevealed(const Widget& w) final {};
+    void onLedGotHidden(const Widget& w) final {};
 };
 
 TEST(FpLedSceneHandlerTest, setLedIfUnreservedTest) {
