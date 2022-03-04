@@ -21,7 +21,7 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
 # Package installs
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
 	sudo \
         cmake \
         clang-format \
@@ -29,19 +29,20 @@ RUN apt-get install -y \
         g++ \
         git \
         libgtest-dev \
-        libgmock-dev
+        libgmock-dev \
+        && rm -rf /var/lib/apt/lists/*
 
 # some utilities for runtime
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
         vim \
         feedgnuplot \
         netcat \
         zsh \
-        curl
+        wget \
+        curl \
+        && rm -rf /var/lib/apt/lists/*
 
 #RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-RUN rm -rf /var/lib/apt/lists/*
 
 # Create group and user
 RUN groupadd --gid=$GID $BUILD_USER
@@ -52,6 +53,8 @@ RUN usermod -aG sudo $BUILD_USER
 USER $BUILD_USER
 WORKDIR /home/$BUILD_USER
 
+RUN wget -qO- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | zsh || true
+RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="gentoo"/g' ~/.zshrc
 
 
 
