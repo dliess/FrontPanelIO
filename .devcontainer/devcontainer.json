@@ -10,6 +10,9 @@
       "terminal.integrated.shell.linux": "/bin/zsh",
       "terminal.integrated.detectLocale": "off"
    },
+   "mounts" : [
+      "type=bind,source=${env:HOME}/.ssh,target=/home/build-user/.ssh"
+   ],
    "extensions": [
       "eamodio.gitlens",
       "eugenwiens.bitbake",
