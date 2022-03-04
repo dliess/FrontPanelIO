@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.11)
  
-set (CMAKE_CXX_STANDARD 17)
+project(FrontPanelIO 
+        VERSION 0.0.1 
+        LANGUAGES C CXX)
 
-project(ClientHelper VERSION 0.0.1 LANGUAGES C CXX)
+set (CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(FrontPanelUtils)
 add_subdirectory(FrontPanelBase)
