@@ -4,7 +4,7 @@
 		"dockerfile": "Dockerfile"
    },
    "runArgs" : ["--privileged",
-     "--group-add", "audio"
+                "--network=host"
    ],
    "settings": { 
       "terminal.integrated.shell.linux": "/bin/zsh",
