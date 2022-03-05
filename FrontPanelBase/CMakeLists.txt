@@ -1,4 +1,6 @@
-add_subdirectory(UnitTest EXCLUDE_FROM_ALL)
+if(BUILD_TESTS)
+    add_subdirectory(UnitTest EXCLUDE_FROM_ALL)
+endif()
 
 set(TOPOLOGY_CODE_GEN_TOOL "${CMAKE_CURRENT_LIST_DIR}/Topology/WidgetCodeGenerator.py" PARENT_SCOPE)
 

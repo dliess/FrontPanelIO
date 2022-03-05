@@ -8,13 +8,19 @@ set (CMAKE_CXX_STANDARD 17)
 
 include(GNUInstallDirs)
 
+include(CTest)
+option(BUILD_TESTS "Build with unit-tests" ON)
+
 add_subdirectory(FrontPanelUtils)
 add_subdirectory(FrontPanelBase)
 add_subdirectory(FrontPanelGfx)
 add_subdirectory(FrontPanelDisplay)
 
-add_custom_target(UnitTests)
-add_dependencies(UnitTests runTestsFpBase runTestsFpDisplay)
+if(BUILD_TESTS)
+  enable_testing() 
+  add_custom_target(UnitTests)
+  add_dependencies(UnitTests runTestsFpBase runTestsFpDisplay)
+endif()
 
 install(EXPORT ${PROJECT_NAME}-targets
   NAMESPACE  ${PROJECT_NAME}::
