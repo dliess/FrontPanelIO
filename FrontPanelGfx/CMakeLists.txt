@@ -8,7 +8,9 @@ set(SOURCES
 set(HEADERS
     "FpRenderBase.h"
     "FpFrameBuffer.h"
+    "FpFrameBuffer.tcc"
     "FpColorRGB.h"
+    "FpColorRGB.tcc"
     "FpFont.h"
     "FpFontRenderer.h"
     "FpRenderIf.h"
